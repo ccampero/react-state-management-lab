@@ -4,6 +4,8 @@ import './App.css';
   const App = () => {
   const [team, setTeam] = useState([]);
   const [money, setMoney] = useState(100);
+  const [totalStrength, setTotalStrength] = useState(0);
+  const [totalAgility, setTotalAgility] = useState(0);
   const [zombieFighters, setZombieFighters] = useState([
     {
       name: 'Survivor',
@@ -77,25 +79,33 @@ import './App.css';
     },
   ]);
 
+  const recalculateStats = (newTeam) => {
+    const newTotalStrength = newTeam.reduce((sum, member) => sum + member.strength, 0);
+    const newTotalAgility = newTeam.reduce((sum, member) => sum + member.agility, 0);
+    setTotalStrength(newTotalStrength);
+    setTotalAgility(newTotalAgility);
+  };
+
   const handleAddFighter = (fighter) => {
     if (money >= fighter.price) {
-      setTeam([...team, fighter]);
+      const newTeam = [...team, fighter];
+      setTeam(newTeam);
       setMoney(money - fighter.price);
+      recalculateStats(newTeam);
     } else {
       console.log("Not enough money");
     }
   };
-
+  
   const handleRemoveFighter = (index) => {
     const fighter = team[index];
     const newTeam = team.filter((_, i) => i !== index);
     setTeam(newTeam);
     setMoney(money + fighter.price);
+    recalculateStats(newTeam);
   };
 
-  const totalStrength = team.reduce((sum, member) => sum + member.strength, 0);
-  const totalAgility = team.reduce((sum, member) => sum + member.agility, 0);
-
+ 
   return (
     <div>
       <h1>Zombie Fighters</h1>
